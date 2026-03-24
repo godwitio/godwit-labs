@@ -6,7 +6,7 @@ Hands-on labs for [Godwit Sync](https://godwit.io). Each lab is a self-contained
 
 | Lab                                                          | Article                                                                                        | Description                                                                                                                                                                                                             |
 | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [S3 Migration Guide Lab](./s3-migration-guide-lab/README.md) | [How to Upload, Transfer, and Download S3 Data](https://godwit.io/articles/s3-migration-guide) | Step-by-step S3 migration guide covering uploads to S3, S3-to-S3 transfers between providers, and downloading S3 buckets to local disk. Includes resumable transfers, checksum verification, and a hands-on Docker lab. |
+| [S3 Migration Guide Lab](./s3-migration-guide-lab/README.md) | [How to Upload, Transfer, and Download S3 Data](https://godwit.io/blog/s3-migration-guide) | Step-by-step S3 migration guide covering uploads to S3, S3-to-S3 transfers between providers, and downloading S3 buckets to local disk. Includes resumable transfers, checksum verification, and a hands-on Docker lab. |
 
 ## Disclaimer
 
