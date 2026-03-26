@@ -4,10 +4,10 @@ Hands-on Docker labs for [Godwit Sync](https://godwit.io). Each lab is a self-co
 
 ## Labs
 
-| Lab | Description |
-| --- | --- |
-| [How to Verify S3 Migrations with Godwit Sync](./verifying-s3-migrations-lab/README.md) | Learn how to verify S3 migrations, list failed objects, inspect transfer runs, and validate checksums with Godwit Sync. Build a queryable audit trail for every object transferred. |
+| Lab                                                                                                     | Description                                                                                                                                                                                                             |
+| ------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [S3 Migration Guide: How to Upload, Transfer, and Download S3 Data](./s3-migration-guide-lab/README.md) | Step-by-step S3 migration guide covering uploads to S3, S3-to-S3 transfers between providers, and downloading S3 buckets to local disk. Includes resumable transfers, checksum verification, and a hands-on Docker lab. |
+| [How to Verify S3 Migrations with Godwit Sync](./verifying-s3-migrations-lab/README.md)                 | Learn how to verify S3 migrations, list failed objects, inspect transfer runs, and validate checksums with Godwit Sync. Build a queryable audit trail for every object transferred.                                     |
 
 ## Disclaimer
 
