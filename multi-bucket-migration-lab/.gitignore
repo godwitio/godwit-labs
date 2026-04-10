@@ -1,0 +1,5 @@
+state/
+*.state.db
+*.state.db-wal
+*.state.db-shm
+data/

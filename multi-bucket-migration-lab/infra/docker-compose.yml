@@ -1,0 +1,136 @@
+# Copyright (c) 2026 Godwit.io
+#
+# Licensed under the MIT License. You may obtain a copy of the License at
+#
+#     https://opensource.org/licenses/MIT
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+
+services:
+  volume-permissions:
+    image: alpine:latest
+    container_name: multi-bucket-lab-volume-permissions
+    command: >
+      sh -c "
+        for d in /data/source /data/target /logs/source /logs/target; do
+          mkdir -p $$d && chown -R 10001:10001 $$d;
+        done
+      "
+    volumes:
+      - rustfs-source-data:/data/source
+      - rustfs-target-data:/data/target
+      - rustfs-source-logs:/logs/source
+      - rustfs-target-logs:/logs/target
+    networks:
+      - lab
+
+  rustfs-source:
+    image: rustfs/rustfs:latest
+    container_name: multi-bucket-lab-rustfs-source
+    depends_on:
+      volume-permissions:
+        condition: service_completed_successfully
+    ports:
+      - "7000:9000"   # S3 API
+      - "7010:9001"   # Console
+    environment:
+      RUSTFS_VOLUMES: /data
+      RUSTFS_ADDRESS: "0.0.0.0:9000"
+      RUSTFS_CONSOLE_ADDRESS: "0.0.0.0:9001"
+      RUSTFS_CONSOLE_ENABLE: "true"
+      RUSTFS_ACCESS_KEY: rustfsadmin
+      RUSTFS_SECRET_KEY: rustfsadmin
+    volumes:
+      - rustfs-source-data:/data
+      - rustfs-source-logs:/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:9000/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    networks:
+      - lab
+
+  rustfs-target:
+    image: rustfs/rustfs:latest
+    container_name: multi-bucket-lab-rustfs-target
+    depends_on:
+      volume-permissions:
+        condition: service_completed_successfully
+    ports:
+      - "7001:9000"   # S3 API
+      - "7011:9001"   # Console
+    environment:
+      RUSTFS_VOLUMES: /data
+      RUSTFS_ADDRESS: "0.0.0.0:9000"
+      RUSTFS_CONSOLE_ADDRESS: "0.0.0.0:9001"
+      RUSTFS_CONSOLE_ENABLE: "true"
+      RUSTFS_ACCESS_KEY: rustfsadmin
+      RUSTFS_SECRET_KEY: rustfsadmin
+    volumes:
+      - rustfs-target-data:/data
+      - rustfs-target-logs:/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://127.0.0.1:9000/health"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 10s
+    networks:
+      - lab
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: multi-bucket-lab-prometheus
+    ports:
+      - "7090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9090/-/healthy"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+    networks:
+      - lab
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: multi-bucket-lab-grafana
+    ports:
+      - "7030:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/multi-bucket-migration.json
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 15s
+    networks:
+      - lab
+
+networks:
+  lab:
+    driver: bridge
+
+volumes:
+  rustfs-source-data:
+  rustfs-target-data:
+  rustfs-source-logs:
+  rustfs-target-logs:
+  prometheus-data:
+  grafana-data:
