@@ -1,16 +1,40 @@
-# Godwit Sync Labs
+# S3 Migration Labs with Docker (MinIO, RustFS, Garage, Moto)
 
-Hands-on Docker labs for [Godwit Sync](https://godwit.io). Each lab is a self-contained environment you can clone and run locally.
+**This repository provides reproducible S3 migration testing environments for [Godwit Sync](https://godwit.io).** It contains hands-on labs for simulating real-world S3 migrations locally using Docker, so you can rehearse, validate, and troubleshoot a migration end-to-end without any cloud credentials. Each lab is a self-contained Docker Compose stack that provisions source and target object storage, runs a real S3 migration workflow, and exposes the verification or observability tooling used to validate it.
 
-## Labs
+## Who these labs are for
 
-| Lab                                                                                                                       | Description                                                                                                                                                                                                             |
-| ------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Monitor S3 Migrations in Real Time with Godwit Sync, Prometheus, and Grafana](./godwit-grafana-dashboards-lab/README.md) | Track S3 migration progress, throughput, latency, multipart uploads, retries, and verification in real time with Godwit Sync's built-in Prometheus metrics and a pre-built Grafana dashboard.                           |
-| [Migrate Multiple S3 Buckets in Parallel](./multi-bucket-migration-lab/README.md)                                         | Migrate multiple S3 buckets in parallel using one Godwit config file per pair, a short orchestrator script, and a single Grafana dashboard showing all runs.                                                            |
-| [S3 Migration Guide: How to Upload, Transfer, and Download S3 Data](./s3-migration-guide-lab/README.md)                   | Step-by-step S3 migration guide covering uploads to S3, S3-to-S3 transfers between providers, and downloading S3 buckets to local disk. Includes resumable transfers, checksum verification, and a hands-on Docker lab. |
-| [S3 Version History Migration: Step-by-Step with Godwit Sync](./s3-version-history-migration-lab/README.md)               | Migrate every S3 version: current, noncurrent, and delete markers with Godwit Sync's --version-mode flag. Includes full history, point-in-time filtering, Object Lock buckets, and a hands-on Docker lab.               |
-| [How to Verify S3 Migrations with Godwit Sync](./verifying-s3-migrations-lab/README.md)                                   | Verify S3 migrations, list failed objects, inspect runs, and validate checksums with Godwit Sync. Build an audit trail for every object.                                                                                |
+- **Platform and DevOps engineers** migrating data between S3, MinIO, RustFS, Garage, Moto, or other S3-compatible object stores.
+- **SREs** adopting Prometheus and Grafana observability for long-running data transfers.
+- **Backup, compliance, and data engineers** validating object counts, checksums, version history, and Object Lock state across a migration.
+
+## What this repository provides
+
+Five Docker-based labs covering the core surfaces of an S3 migration: transfer direction, version history, multi-bucket orchestration, real-time monitoring, and post-migration verification. Each lab pairs with a long-form [S3 migration guide](https://godwit.io/blog) and is designed to run to completion on a developer laptop.
+
+### Core S3 migration workflows
+
+- **[S3 Migration Guide: Upload, Transfer, and Download S3 Data](./s3-migration-guide-lab/README.md)** — Run the three canonical migration directions (`fs → s3`, `s3 → s3`, `s3 → fs`) across MinIO and Garage. Demonstrates basic sync, plan-first transfers with `--plan-only` and `--resume`, and checksum verification.
+- **[S3 Version History Migration](./s3-version-history-migration-lab/README.md)** — Migrate versioned S3 objects with mixed storage classes (STANDARD, GLACIER) and replicate Object Lock metadata using the `--version-mode` flag. Covers full history, point-in-time filtering, and Object Lock-protected buckets.
+- **[Multi-Bucket Migration Orchestration](./multi-bucket-migration-lab/README.md)** — Migrate four S3 buckets in parallel between two RustFS clusters using a YAML runbook, a Python orchestrator, and a single Grafana dashboard that shows all pairs. One pair is pre-configured to fail so you can practice the retry workflow.
+
+### Observability and verification
+
+- **[Real-Time Migration Monitoring with Prometheus and Grafana](./godwit-grafana-dashboards-lab/README.md)** — Scrape Godwit Sync's built-in Prometheus metrics every 5 seconds and render them in a pre-provisioned 52-panel Grafana dashboard. Tracks throughput, latency, multipart uploads, retries, and verification across a multi-round, three-hop migration.
+- **[Verifying S3 Migrations](./verifying-s3-migrations-lab/README.md)** — Walk through the `godwit plan` subcommands to list migration runs, inspect object counts and storage class distribution, surface failed or case-conflicting objects, and generate a compliance audit report from the state database.
+
+## How the labs work
+
+Each lab ships with a `docker-compose.yml` that provisions the object storage endpoints (MinIO, RustFS, Garage, or Moto), any supporting services (Prometheus, Grafana), and a seed step that populates the source buckets. A migration script or YAML runbook then invokes Godwit Sync against the local stack and writes results to a state database. All state lives in Docker volumes, so a lab can be reset to a clean slate and re-run.
+
+## Supported S3-compatible environments
+
+The labs exercise S3-compatible object stores that run locally under Docker:
+
+- **MinIO** — primary test target with full S3 API coverage.
+- **RustFS** — used for multi-cluster and multi-bucket scenarios.
+- **Garage** — used as a cross-provider transfer target.
+- **Moto** — used to emulate AWS S3 storage classes and Object Lock behavior.
 
 ## Disclaimer
 
