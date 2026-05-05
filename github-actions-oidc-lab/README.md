@@ -1,8 +1,3 @@
----
-title: "Lab: GitHub Actions OIDC to AWS S3 with Godwit Sync"
-github_issue: 84
----
-
 # Lab: GitHub Actions OIDC to AWS S3 with Godwit Sync
 
 Hands-on lab for the article:
@@ -123,13 +118,13 @@ The most recent event should have `Principal` matching your role's session name 
 
 ## What This Proves
 
-| Claim in the article                                | How the lab demonstrates it                                                                                                                                         |
-| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| OIDC replaces long-lived keys in CI                 | No `AWS_ACCESS_KEY_ID` secret exists in the repo                                                                                                                    |
-| Trust policy scopes the credential                  | Changing `GITHUB_REF` or committing from a different branch fails `sts:AssumeRoleWithWebIdentity` with `AccessDenied`                                               |
+| Claim in the article                                | How the lab demonstrates it                                                                                                                                                             |
+| --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| OIDC replaces long-lived keys in CI                 | No `AWS_ACCESS_KEY_ID` secret exists in the repo                                                                                                                                        |
+| Trust policy scopes the credential                  | Changing `GITHUB_REF` or committing from a different branch fails `sts:AssumeRoleWithWebIdentity` with `AccessDenied`                                                                   |
 | Credentials are short-lived                         | The session expires after the role's `MaxSessionDuration`; the **Verify the role** step runs `aws sts get-caller-identity` immediately after assume-role to confirm the session is live |
-| Godwit Sync picks up SDK credentials transparently  | `--source-auth env` and `--destination-auth env` read whatever `aws-actions/configure-aws-credentials` exported, no Godwit-specific auth plumbing                  |
-| CloudTrail attributes calls to the role, not a user | `AssumeRoleWithWebIdentity` + subsequent `GetObject`/`PutObject` events show the role as `userIdentity.sessionContext.sessionIssuer`                                |
+| Godwit Sync picks up SDK credentials transparently  | `--source-auth env` and `--destination-auth env` read whatever `aws-actions/configure-aws-credentials` exported, no Godwit-specific auth plumbing                                       |
+| CloudTrail attributes calls to the role, not a user | `AssumeRoleWithWebIdentity` + subsequent `GetObject`/`PutObject` events show the role as `userIdentity.sessionContext.sessionIssuer`                                                    |
 
 ## Security Hardening Beyond the Basics
 
