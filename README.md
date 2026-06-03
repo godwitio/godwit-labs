@@ -10,7 +10,7 @@
 
 ## What this repository provides
 
-Six Docker-based labs covering the core surfaces of an S3 migration: transfer direction, version history, multi-bucket orchestration, real-time monitoring, post-migration verification, and S3 authentication. Each lab pairs with a long-form [S3 migration guide](https://godwit.io/blog) and is designed to run to completion on a developer laptop.
+Seven Docker-based labs covering the core surfaces of an S3 migration: transfer direction, version history, multi-bucket orchestration, real-time monitoring, post-migration verification, S3 authentication, and IAM migration. Each lab pairs with a long-form [S3 migration guide](https://godwit.io/blog) and is designed to run to completion on a developer laptop.
 
 ### Core S3 migration workflows
 
@@ -26,6 +26,7 @@ Six Docker-based labs covering the core surfaces of an S3 migration: transfer di
 ### Authentication
 
 - **[AWS S3 Authentication Methods Compared: Static Keys, IAM Roles, STS, and OIDC](./github-actions-oidc-lab/README.md)** — Compare AWS S3 authentication methods by leak blast radius, credential lifetime, and rotation cost. Decision matrix maps each deployment shape to the right auth mode.
+- **[Migrate MinIO IAM to RustFS: Users, Policies, and Access Keys](./minio-rustfs-iam-migration-lab/README.md)** — Seed MinIO with built-in IAM (a policy, user, group, and service account), export it with `mc admin cluster iam export`, and import it into a fresh RustFS instance via the `import-iam` admin endpoint. Verifies a migrated identity authenticates and its policy is enforced, and flags what never migrates (LDAP/OIDC) plus the import endpoint's security advisory.
 
 ## How the labs work
 
