@@ -35,7 +35,7 @@ Each round also runs a version-history migration (`versioned-src` -> `versioned-
 
 ### migrate-12500.py -- Large Object Count, Single Round
 
-Single round with 12 500 object versions across 6 200 unique keys. 700 keys carry 10 versions each (versioned bucket with `--version-mode all`), 5 500 keys are single-version. 200 keys have Object Lock (100 GOVERNANCE retention, 100 legal hold). ~5% of versions are large (65-75 MB) to trigger multipart uploads. The seed script generates ~44 GB of data, which exceeds the 10 GB free plan limit. [Register on godwit.io](https://godwit.io/) for a free 50 GB trial license valid for 30 days -- no credit card required. Migrates MinIO 1 to MinIO 2 with `--version-mode all --object-lock`, then verifies checksums. **Deliberately throttled to 5 MB/s** (`--read-bps`) so the migration runs long enough to observe Grafana panels updating in real time; remove the flag for full-speed transfers. To re-run, reset the destination first with `python3 scripts/clean-dst-12500.py`.
+Single round with 12 500 object versions across 6 200 unique keys. 700 keys carry 10 versions each (versioned bucket with `--version-mode all`), 5 500 keys are single-version. 200 keys have Object Lock (100 GOVERNANCE retention, 100 legal hold). ~5% of versions are large (65-75 MB) to trigger multipart uploads. The seed script generates ~44 GB of data, which fits within the 50 GB free per-run tier, so no license is required. For larger object counts, [register on godwit.io](https://godwit.io/) for an unlimited 30-day trial license -- no credit card required. Migrates MinIO 1 to MinIO 2 with `--version-mode all --object-lock`, then verifies checksums. **Deliberately throttled to 5 MB/s** (`--read-bps`) so the migration runs long enough to observe Grafana panels updating in real time; remove the flag for full-speed transfers. To re-run, reset the destination first with `python3 scripts/clean-dst-12500.py`.
 
 | Step    | Source                     | Destination                | Direction |
 | ------- | -------------------------- | -------------------------- | --------- |
@@ -97,7 +97,7 @@ For the large-object-count migration, also run:
 python3 scripts/seed-data-12500.py
 ```
 
-This seeds the data described in the [migrate-12500.py](#migrate-12500py----large-object-count-single-round) section above (~44 GB). Requires the 50 GB trial license -- see that section for details.
+This seeds the data described in the [migrate-12500.py](#migrate-12500py----large-object-count-single-round) section above (~44 GB). Runs on the free 50 GB per-run tier -- see that section for details.
 
 ### 3. Open Grafana
 
